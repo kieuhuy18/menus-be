@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.app</groupId>
-	<artifactId>MealPlan</artifactId>
+	<artifactId>AIChat</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>MealPlan</name>
-	<description>Menus MealPlan module BE</description>
+	<name>ChatHistory</name>
+	<description>Menus ChatHistory module BE</description>
 	<url/>
 	<licenses>
 		<license/>

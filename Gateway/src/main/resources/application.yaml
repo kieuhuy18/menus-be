@@ -1,3 +1,26 @@
 spring:
   application:
-    name: Gateway
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+
+        - id: user_route
+          uri: http://localhost:8081
+          predicates:
+            - Path=/users/**
+
+
+        - id: mealplan_route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/mealplan/**
+
+
+        - id: aichat_route
+          uri: http://localhost:8083
+          predicates:
+            - Path=/aichat/**
+
+server:
+  port: 8080

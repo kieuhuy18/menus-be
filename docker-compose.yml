@@ -1,0 +1,60 @@
+version: '3.8' # Phiên bản của Docker Compose
+
+services:
+
+  # === 1. Dịch vụ Database MongoDB ===
+  mongo-db:
+    image: mongo:latest # Dùng image có sẵn của MongoDB
+    container_name: my-mongo-container
+    ports:
+      - "27017:27017" # Mở cổng 27017 để kết nối
+    volumes:
+      - mongo-data:/data/db # Giữ dữ liệu DB ngay cả khi container tắt
+
+  # === 2. Dịch vụ API Gateway ===
+  api-gateway:
+    build: ./Gateway # 1. Tìm Dockerfile trong thư mục này
+    container_name: my-gateway-container
+    ports:
+      - "8080:8080" # 2. Mở cổng 8080
+    depends_on: # 3. Khởi động sau khi các service chạy
+      - user
+      - mealplan
+      - aichat
+
+  # === 3. Dịch vụ User Service ===
+  user:
+    build: ./User
+    container_name: my-user-container
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-db:27017/menusdb
+    depends_on:
+      - mongo-db # 5. Khởi động sau khi mongo-db chạy
+
+  # === 4. Dịch vụ Mealplan Service ===
+  mealplan:
+    build: ./MealPlan
+    container_name: my-mealplan-container
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-db:27017/menusdb
+    depends_on:
+      - mongo-db
+
+  # === 5. Dịch vụ AIChat Service ===
+  aichat:
+    build: ./AIChat
+    container_name: my-aichat-container
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-db:27017/menusdb
+    depends_on:
+      - mongo-db
+
+# Định nghĩa volume để lưu dữ liệu MongoDB
+volumes:
+  mongo-data: {}
