@@ -3,10 +3,12 @@ package com.app.user.service;
 import com.app.user.entity.Role;
 import com.app.user.repository.RoleRepository;
 import com.app.user.repository.PermissionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -19,6 +21,7 @@ public class RoleService {
         this.permissionRepository = permissionRepository;
     }
 
+    // Tạo mới role, kiểm tra trùng tên và permissions tồn tại
     public Role create(Role role) {
         if (role.getNameRole() != null && roleRepository.findByNameRole(role.getNameRole()).isPresent()) {
             throw new IllegalArgumentException("Role name already exists");
@@ -34,10 +37,11 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
-    public List<Role> findAll() {
-        return roleRepository.findAll();
+    public Page<Role> findAll(Pageable pageable) {
+        return roleRepository.findAll(pageable);
     }
 
+    // Tìm role theo ID
     public Role findById(String id) {
         return roleRepository.findById(id).orElse(null);
     }
@@ -69,6 +73,7 @@ public class RoleService {
         return roleRepository.save(existing);
     }
 
+    // Xóa role
     public boolean delete(String id) {
         if (!roleRepository.existsById(id)) return false;
         
@@ -77,6 +82,7 @@ public class RoleService {
         return true;
     }
     
+    // Helper: Kiểm tra danh sách permission có tồn tại không
     private void validatePermissionIds(Set<String> permissionIds) {
         for (String permissionId : permissionIds) {
             if (!permissionRepository.existsById(permissionId)) {

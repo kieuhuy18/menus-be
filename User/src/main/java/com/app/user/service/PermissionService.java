@@ -4,6 +4,9 @@ import com.app.user.entity.Permission;
 import com.app.user.entity.Role;
 import com.app.user.repository.PermissionRepository;
 import com.app.user.repository.RoleRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import java.util.Date;
@@ -19,6 +22,7 @@ public class PermissionService {
         this.roleRepository = roleRepository;
     }
 
+    // Tạo permission mới, kiểm tra trùng tên
     public Permission create(Permission p) {
         if (p.getNamePermission() != null && repository.findByNamePermission(p.getNamePermission()).isPresent()) {
             throw new IllegalArgumentException("Permission name already exists");
@@ -28,10 +32,12 @@ public class PermissionService {
         return repository.save(p);
     }
 
-    public List<Permission> findAll() {
-        return repository.findAll();
+    // Lấy danh sách permission theo phân trang
+    public Page<Permission> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
+    // Tìm permission theo ID
     public Permission findById(String id) {
         return repository.findById(id).orElse(null);
     }
@@ -52,6 +58,7 @@ public class PermissionService {
         return repository.save(existing);
     }
 
+    // Xóa permission, kiểm tra xem có role nào đang sử dụng không
     public boolean delete(String id) {
         if (!repository.existsById(id)) return false;
         
