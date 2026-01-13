@@ -55,9 +55,8 @@ public class PermissionController {
                 ResponseStatus.SUCCESS.getLabel(), 
                 pageData.getContent(),
                 p,
-                s,
-                pageData.getTotalElements(),
-                pageData.getTotalPages()
+                s
+                
         ));
     }
 

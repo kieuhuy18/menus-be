@@ -55,16 +55,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
-    // Xử lý lỗi không tìm thấy tài nguyên (404 Not Found)
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpStatus.NOT_FOUND.value());
-        body.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
-        body.put("message", ex.getMessage());
-        body.put("timestamp", LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
-    }
 
     // Xử lý lỗi body request không đọc được (VD: sai format JSON)
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -110,5 +100,38 @@ public class GlobalExceptionHandler {
         body.put("timestamp", LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
+    
+    //khi DuplicateFieldException được ném ra thì gọi hàm này . thay vì lỗi 500 thì -> trả về 400 + thông tin lỗi
+    @ExceptionHandler(DuplicateFieldException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicate(DuplicateFieldException ex) {
+    return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    //khi dữ liệu user không đúng -> gọi hàm này -> trả về 400 + thông tin lỗi
+    @ExceptionHandler(InvalidFieldException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidField(InvalidFieldException ex) {
+    return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+
+    //khi service không tìm thấy tài nguyên -> gọi hàm này -> trả về 404 + thông tin lỗi
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
+    return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+
+    //Hàm dùng chung để xây dựng response trả về client
+    private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message) {
+    Map<String, Object> body = new HashMap<>();
+    body.put("status", status.value());
+    body.put("error", status.getReasonPhrase());
+    body.put("message", message);
+    body.put("timestamp", LocalDateTime.now());
+    return ResponseEntity.status(status).body(body);
+}
+
+
+    
 }
 

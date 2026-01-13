@@ -55,9 +55,8 @@ public class RoleController {
                 ResponseStatus.SUCCESS.getLabel(), 
                 pageData.getContent(),
                 p,
-                s,
-                pageData.getTotalElements(),
-                pageData.getTotalPages()
+                s
+                
         ));
     }
 

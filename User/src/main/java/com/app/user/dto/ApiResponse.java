@@ -1,5 +1,7 @@
 package com.app.user.dto;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,26 +19,23 @@ public class ApiResponse<T> {
     private T data;
     private Integer pageNumber;
     private Integer pageLimit;
-    private Long totalElements;
-    private Integer totalPages;
+    
 
     public static <T> ApiResponse<T> of(ResponseStatus status, String message, T data) {
-        return ApiResponse.<T>builder()
-                .code(status.getCode())
-                .message(message != null ? message : status.getLabel())
-                .data(data)
-                .build();
+        ApiResponse<T> res = new ApiResponse<>();
+        res.code = status.getCode();
+        res.message = message != null ? message : status.getLabel();
+        res.data = data;
+        return res;
     }
 
-    public static <T> ApiResponse<T> list(ResponseStatus status, String message, T data, int pageNumber, int pageLimit, long totalElements, int totalPages) {
-        return ApiResponse.<T>builder()
-                .code(status.getCode())
-                .message(message != null ? message : status.getLabel())
-                .data(data)
-                .pageNumber(pageNumber)
-                .pageLimit(pageLimit)
-                .totalElements(totalElements)
-                .totalPages(totalPages)
-                .build();
+    public static <T> ApiResponse<List<T>> list(ResponseStatus status, String message, List<T> data, int pageNumber, int pageLimit) {
+        ApiResponse<List<T>> res = new ApiResponse<>();
+        res.code = status.getCode();
+        res.message = message != null ? message : status.getLabel();
+        res.data =  data;
+        res.pageNumber = pageNumber;
+        res.pageLimit = pageLimit;
+        return res;
     }
 }
