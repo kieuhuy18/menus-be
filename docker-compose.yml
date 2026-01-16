@@ -63,6 +63,16 @@ services:
     depends_on:
       - mongo-db
 
+  health-tracking:
+    build: ./HealthTracking
+    container_name: my-healthtracking-container
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-db:27017/menusdb
+    depends_on:
+      - mongo-db
+
 # Định nghĩa volume để lưu dữ liệu MongoDB
 volumes:
   mongo-data: {}
