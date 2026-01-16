@@ -73,6 +73,16 @@ services:
     depends_on:
       - mongo-db
 
+  recipe:
+    build: ./Recipe
+    container_name: my-recipe-container
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-db:27017/menusdb
+    depends_on:
+      - mongo-db
+
 # Định nghĩa volume để lưu dữ liệu MongoDB
 volumes:
   mongo-data: {}
