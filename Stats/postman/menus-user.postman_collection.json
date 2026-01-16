@@ -1,0 +1,99 @@
+{
+  "info": {
+    "name": "Menus - User Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "menus-user-service-collection"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8081" }
+  ],
+  "item": [
+    {
+      "name": "Permissions",
+      "item": [
+        {
+          "name": "Create Permission",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/users/permissions", "host": ["{{baseUrl}}"], "path": ["users","permissions"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"namePermission\": \"perm.view\",\n  \"description\": \"View users\",\n  \"resource\": \"users\",\n  \"action\": [\"read\"]\n}"
+            }
+          }
+        },
+        { "name": "List Permissions", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/users/permissions", "host": ["{{baseUrl}}"], "path": ["users","permissions"] } } },
+        { "name": "Get Permission by Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/users/permissions/:id", "host": ["{{baseUrl}}"], "path": ["users","permissions",":id"] } } },
+        {
+          "name": "Update Permission",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/users/permissions/:id", "host": ["{{baseUrl}}"], "path": ["users","permissions",":id"] },
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated description\"\n}" }
+          }
+        },
+        { "name": "Delete Permission", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/users/permissions/:id", "host": ["{{baseUrl}}"], "path": ["users","permissions",":id"] } } }
+      ]
+    },
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/users/roles", "host": ["{{baseUrl}}"], "path": ["users","roles"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameRole\": \"ADMIN\",\n  \"description\": \"Admin role\",\n  \"permissionIds\": [\"<permissionId>\"]\n}"
+            }
+          }
+        },
+        { "name": "List Roles", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/users/roles", "host": ["{{baseUrl}}"], "path": ["users","roles"] } } },
+        { "name": "Get Role by Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/users/roles/:id", "host": ["{{baseUrl}}"], "path": ["users","roles",":id"] } } },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/users/roles/:id", "host": ["{{baseUrl}}"], "path": ["users","roles",":id"] },
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated role\",\n  \"permissionIds\": [\"<permissionId>\"]\n}" }
+          }
+        },
+        { "name": "Delete Role", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/users/roles/:id", "host": ["{{baseUrl}}"], "path": ["users","roles",":id"] } } }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userFullName\": \"Nguyen Van A\",\n  \"userPhonenumber\": \"0901234567\",\n  \"userBirthday\": \"2000-01-01T00:00:00.000Z\",\n  \"userGender\": \"male\",\n  \"userAddress\": { \"city\": \"HCMC\", \"country\": \"VN\" },\n  \"userEmail\": \"a@example.com\",\n  \"userAvatar\": \"avatar.png\",\n  \"userActive\": true,\n  \"userName\": \"nguyenvana\",\n  \"password\": \"secret\",\n  \"roleId\": \"<roleId>\"\n}"
+            }
+          }
+        },
+        { "name": "List Users", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] } } },
+        { "name": "Get User by Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/users/:id", "host": ["{{baseUrl}}"], "path": ["users",":id"] } } },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/users/:id", "host": ["{{baseUrl}}"], "path": ["users",":id"] },
+            "body": { "mode": "raw", "raw": "{\n  \"userFullName\": \"Updated\"\n}" }
+          }
+        },
+        { "name": "Delete User", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/users/:id", "host": ["{{baseUrl}}"], "path": ["users",":id"] } } }
+      ]
+    }
+  ]
+}
