@@ -83,6 +83,16 @@ services:
     depends_on:
       - mongo-db
 
+  notifications:
+    build: ./Notifications
+    container_name: my-notifications-container
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-db:27017/menusdb
+    depends_on:
+      - mongo-db
+
 # Định nghĩa volume để lưu dữ liệu MongoDB
 volumes:
   mongo-data: {}
