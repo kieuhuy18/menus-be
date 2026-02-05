@@ -1,6 +1,8 @@
 package com.app.user.controller;
-
+import com.app.user.dto.*;
 import com.app.user.dto.ApiResponse;
+import com.app.user.dto.PermissionRequestDTO;
+import com.app.user.dto.PermissionResponseDTO;
 import com.app.user.dto.ResponseStatus;
 import com.app.user.entity.Permission;
 import com.app.user.service.PermissionService;
@@ -20,69 +22,92 @@ import java.util.List;
 public class PermissionController {
     private final PermissionService service;
 
-    public PermissionController(PermissionService service) {
+        // Inject PermissionService để thao tác quyền hạn
+        public PermissionController(PermissionService service) {
         this.service = service;
     }
 
     // API tạo mới quyền hạn (Permission)
     @PostMapping
-    public ResponseEntity<ApiResponse<Permission>> create(@Valid @RequestBody Permission body) {
-        Permission created = service.create(body);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.of(ResponseStatus.SUCCESS, ResponseStatus.SUCCESS.getLabel(), created));
+    public ResponseEntity<ApiResponse<PermissionResponseDTO>> create(@Valid @RequestBody PermissionRequestDTO request) {
+        Permission created = service.create(request);
+       
+
+        return ResponseEntity.ok(
+                ApiResponse.of(
+                        ResponseStatus.SUCCESS,
+                        null,
+                        PermissionResponseDTO.fromEntity(created)
+                ));
     }
 
     // API lấy danh sách quyền hạn có phân trang
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Permission>>> list(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) Integer pageNumber,
-            @RequestParam(required = false) Integer pageLimit
+    public ResponseEntity<ApiResponse<List<PermissionResponseDTO>>> list(
+            @RequestParam(defaultValue = "1") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageLimit
+            
     ) {
-        int p = pageNumber != null ? pageNumber : page;
-        int s = pageLimit != null ? pageLimit : size;
-        if (p < 1) p = 1;
-        if (s < 1) s = 10;
-        Pageable pageable = PageRequest.of(p - 1, s, Sort.by("createAt").descending());
         
+        Pageable pageable = PageRequest.of(
+                Math.max(pageNumber - 1, 0),
+                Math.max(pageLimit, 1),
+                Sort.by("createAt").descending()
+        );
         // Gọi Service
         Page<Permission> pageData = service.findAll(pageable);
         
         // Trả về response với đầy đủ thông tin phân trang
+        
+        List<PermissionResponseDTO> data = pageData.getContent()
+                .stream()
+                .map(PermissionResponseDTO::fromEntity)
+                .toList();
+        
         return ResponseEntity.ok(ApiResponse.list(
                 ResponseStatus.SUCCESS, 
-                ResponseStatus.SUCCESS.getLabel(), 
-                pageData.getContent(),
-                p,
-                s
+                null,
+                data,
+                pageNumber,
+                pageLimit
                 
         ));
     }
 
     // API lấy thông tin chi tiết quyền hạn theo ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Permission>> get(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<PermissionResponseDTO>> get(@PathVariable String id) {
         Permission found = service.findById(id);
-        if (found == null) return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.of(ResponseStatus.NOT_FOUND, ResponseStatus.NOT_FOUND.getLabel(), null));
-        return ResponseEntity.ok(ApiResponse.of(ResponseStatus.SUCCESS, ResponseStatus.SUCCESS.getLabel(), found));
+        
+        return ResponseEntity.ok(
+                ApiResponse.of(
+                        ResponseStatus.SUCCESS,
+                        null,
+                        PermissionResponseDTO.fromEntity(found)
+                ));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Permission>> update(@PathVariable String id, @Valid @RequestBody Permission update) {
-        Permission updated = service.update(id, update);
-        if (updated == null) return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.of(ResponseStatus.NOT_FOUND, ResponseStatus.NOT_FOUND.getLabel(), null));
-        return ResponseEntity.ok(ApiResponse.of(ResponseStatus.SUCCESS, ResponseStatus.SUCCESS.getLabel(), updated));
+        // API cập nhật quyền hạn theo ID
+        @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<PermissionResponseDTO>> update(@PathVariable String id, @Valid @RequestBody PermissionRequestDTO request) {
+        Permission updated = service.update(id, request);
+        return ResponseEntity.ok(
+                ApiResponse.of(
+                        ResponseStatus.SUCCESS,
+                        null,
+                        PermissionResponseDTO.fromEntity(updated)
+                ));
     }
 
     // API xóa quyền hạn
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Object>> delete(@PathVariable String id) {
-        boolean deleted = service.delete(id);
-        if (!deleted) return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.of(ResponseStatus.NOT_FOUND, ResponseStatus.NOT_FOUND.getLabel(), null));
-        return ResponseEntity.ok(ApiResponse.of(ResponseStatus.SUCCESS, ResponseStatus.SUCCESS.getLabel(), null));
+       service.delete(id);
+         return ResponseEntity.ok(
+                ApiResponse.of(
+                          ResponseStatus.SUCCESS,
+                          "Permission deleted successfully",
+                          null
+                ));
     }
 }

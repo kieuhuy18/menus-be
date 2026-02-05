@@ -1,12 +1,18 @@
 package com.app.user.service;
 
+import com.app.user.dto.PermissionRequestDTO;
+import com.app.user.dto.PermissionResponseDTO;
+import com.app.user.dto.ResponseStatus;
 import com.app.user.entity.Permission;
 import com.app.user.entity.Role;
 import com.app.user.repository.PermissionRepository;
 import com.app.user.repository.RoleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import com.app.user.exception.BusinessException;
 
+
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import java.util.Date;
@@ -23,12 +29,25 @@ public class PermissionService {
     }
 
     // Tạo permission mới, kiểm tra trùng tên
-    public Permission create(Permission p) {
-        if (p.getNamePermission() != null && repository.findByNamePermission(p.getNamePermission()).isPresent()) {
-            throw new IllegalArgumentException("Permission name already exists");
+    public Permission create(PermissionRequestDTO dto) {
+        System.out.println(">>> PermissionService.create called");
+
+        if (!StringUtils.hasText(dto.getNamePermission())) {
+        throw new BusinessException(ResponseStatus.INVALID_PARAM, "Permission name is required");
+    }
+        
+        
+        if (repository.findByNamePermission(dto.getNamePermission()).isPresent()) {
+            throw new BusinessException(ResponseStatus.EXISTS, "Role name already exists");
         }
-        p.setId(null);
-        p.setCreateAt(new Date());
+        Permission p = Permission.builder()
+                .namePermission(dto.getNamePermission())
+                .description(dto.getDescription())
+                .resource(dto.getResource())
+                .action(dto.getAction())
+                .createAt(new Date())
+        
+                .build();
         return repository.save(p);
     }
 
@@ -39,38 +58,42 @@ public class PermissionService {
 
     // Tìm permission theo ID
     public Permission findById(String id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id).orElseThrow(() -> new BusinessException(ResponseStatus.NOT_FOUND, "Permission not found"));
     }
 
-    public Permission update(String id, Permission update) {
-        Permission existing = repository.findById(id).orElse(null);
-        if (existing == null) return null;
-        if (StringUtils.hasText(update.getNamePermission())) {
-            if (!update.getNamePermission().equals(existing.getNamePermission()) &&
-                repository.findByNamePermission(update.getNamePermission()).isPresent()) {
-                throw new IllegalArgumentException("Permission name already exists");
+    public Permission update(String id, PermissionRequestDTO dto) {
+        Permission existing = repository.findById(id).orElseThrow(() -> new BusinessException(ResponseStatus.NOT_FOUND, "Permission not found"));
+        
+        if(StringUtils.hasText(dto.getNamePermission())
+            && !dto.getNamePermission().equals(existing.getNamePermission())) {
+            // kiểm tra trùng tên
+            if (repository.findByNamePermission(dto.getNamePermission()).isPresent()) {
+                throw new BusinessException(ResponseStatus.EXISTS, "Permission name already exists");
             }
-            existing.setNamePermission(update.getNamePermission());
+            existing.setNamePermission(dto.getNamePermission());
         }
-        if (update.getDescription() != null) existing.setDescription(update.getDescription());
-        if (StringUtils.hasText(update.getResource())) existing.setResource(update.getResource());
-        if (update.getAction() != null) existing.setAction(update.getAction());
+          
+        if (dto.getDescription() != null) existing.setDescription(dto.getDescription());
+        if (dto.getResource() != null) existing.setResource(dto.getResource());
+        if (dto.getAction() != null) existing.setAction(dto.getAction());
         return repository.save(existing);
     }
 
     // Xóa permission, kiểm tra xem có role nào đang sử dụng không
-    public boolean delete(String id) {
-        if (!repository.existsById(id)) return false;
+    public void delete(String id) {
+        Permission permission = repository.findById(id)
+                .orElseThrow(() -> new BusinessException(ResponseStatus.NOT_FOUND, "Permission not found"));
+       
         
-        List<Role> rolesUsingPermission = roleRepository.findByPermissionIdsContaining(id);
-        if (!rolesUsingPermission.isEmpty()) {
-            throw new IllegalArgumentException(
-                "Cannot delete permission. It is being used by " + 
-                rolesUsingPermission.size() + " role(s)"
+        List<Role> roles = roleRepository.findByPermissionIdsContaining(id);
+        if (!roles.isEmpty()) {
+            throw new BusinessException(ResponseStatus.INVALID_PARAM,
+                "Permission is being used by roles, cannot delete " 
+                
             );
         }
+        repository.delete(permission);
+        }
         
-        repository.deleteById(id);
-        return true;
+
     }
-}

@@ -9,18 +9,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
+
     private int code;
     private String message;
     private T data;
     private Integer pageNumber;
     private Integer pageLimit;
-    
 
+    //  RESPONSE bình thường
     public static <T> ApiResponse<T> of(ResponseStatus status, String message, T data) {
         ApiResponse<T> res = new ApiResponse<>();
         res.code = status.getCode();
@@ -29,13 +29,21 @@ public class ApiResponse<T> {
         return res;
     }
 
-    public static <T> ApiResponse<List<T>> list(ResponseStatus status, String message, List<T> data, int pageNumber, int pageLimit) {
+    // RESPONSE danh sách
+    public static <T> ApiResponse<List<T>> list(
+            ResponseStatus status,
+            String message,
+            List<T> data,
+            int pageNumber,
+            int pageLimit
+    ) {
         ApiResponse<List<T>> res = new ApiResponse<>();
         res.code = status.getCode();
         res.message = message != null ? message : status.getLabel();
-        res.data =  data;
+        res.data = data;
         res.pageNumber = pageNumber;
         res.pageLimit = pageLimit;
         return res;
     }
 }
+
