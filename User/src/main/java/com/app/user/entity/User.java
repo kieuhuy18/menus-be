@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Set;
 
 @Document("users")
 @Data
@@ -46,4 +47,6 @@ public class User {
     private String roleId;
     private Date userCreateAt;
     private Date userUpdateAt;
+    private Set<String> roleIds;
+
 }

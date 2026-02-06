@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface RoleRepository extends MongoRepository<Role, String> {
     Optional<Role> findByNameRole(String nameRole);
+    boolean existsByNameRole(String nameRole);
     
     List<Role> findByPermissionIdsContaining(String permissionId);
 }

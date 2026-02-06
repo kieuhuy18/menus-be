@@ -33,3 +33,8 @@ Trước khi chạy, bạn cần cài đặt:
 Hệ thống sẽ chạy với các cổng sau:
 * **API Gateway:** `http://localhost:8080`
 * **Database (MongoDB):** `mongodb://localhost:27017`
+
+
+mvn clean package -DskipTests
+docker build -t menus-user .
+docker run -d -p 8081:8081 --name user menus-user

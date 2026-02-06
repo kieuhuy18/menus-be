@@ -1,14 +1,12 @@
-# 1. Bắt đầu từ một image có sẵn Java
-FROM eclipse-temurin:21-jdk
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+WORKDIR /build
+COPY pom.xml pom.xml
+COPY Gateway/pom.xml Gateway/pom.xml
+COPY Gateway/src Gateway/src
+RUN mvn -f Gateway/pom.xml package -Dmaven.test.skip=true
 
-# 2. Đặt tên cho tệp .jar sẽ được build ra
-ARG JAR_FILE=target/*.jar
-
-# 3. Copy tệp .jar từ thư mục 'target' (sau khi Maven build) vào trong image
-COPY ${JAR_FILE} app.jar
-
-# 4. "Mở" cổng mà service này chạy (để Docker biết)
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=build /build/Gateway/target/*.jar app.jar
 EXPOSE 8080
-
-# 5. Lệnh để chạy service khi container khởi động
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]

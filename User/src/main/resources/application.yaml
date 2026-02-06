@@ -8,4 +8,4 @@ spring:
   # Cấu hình kết nối MongoDB
   data:
     mongodb:
-      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/my-shared-db}
+      uri: mongodb://localhost:27017/menusdb

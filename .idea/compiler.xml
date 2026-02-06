@@ -2,45 +2,19 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile name="Annotation profile for AIChat" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
-        </processorPath>
-        <module name="AIChat" />
-      </profile>
-      <profile name="Annotation profile for MealPlan" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
-        </processorPath>
-        <module name="MealPlan" />
-      </profile>
-      <profile name="Annotation profile for User" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
-        </processorPath>
         <module name="User" />
-      </profile>
-      <profile name="Annotation profile for project-root" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
-        </processorPath>
         <module name="Gateway" />
+        <module name="mealplan" />
+        <module name="AIChat" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="MealPlan" target="21" />
+      <module name="mealplan" target="21" />
       <module name="Nutrition" target="21" />
       <module name="Recipe" target="21" />
     </bytecodeTargetLevel>
@@ -52,6 +26,8 @@
       <module name="MealPlan" options="-parameters" />
       <module name="Nutrition" options="-parameters" />
       <module name="Recipe" options="-parameters" />
+      <module name="User" options="-parameters" />
+      <module name="mealplan" options="-parameters" />
     </option>
   </component>
 </project>
